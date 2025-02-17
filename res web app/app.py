@@ -1,5 +1,5 @@
 import bcrypt
-from flask import Flask, jsonify, redirect, render_template, request, session, url_for
+from flask import Flask, flash, jsonify, redirect, render_template, request, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text, func
 import os
@@ -13,10 +13,9 @@ app.secret_key = os.getenv('SECRET_KEY')
 # Configure SQLAlchemy
 app.config['SQLALCHEMY_DATABASE_URI'] = (
     f"mysql+pymysql://{os.getenv('MYSQL_USER')}:{os.getenv('MYSQL_PASSWORD')}"
-    f"@{os.getenv('MYSQL_HOST')}/{os.getenv('MYSQL_DB')}"
+    f"@{os.getenv('MYSQL_HOST')}:{os.getenv('MYSQL_PORT', '3306')}/{os.getenv('MYSQL_DB')}"
     "?charset=utf8mb4"
 )
-
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -106,11 +105,11 @@ def admin_login():
 
     return render_template('admin_login.html')
 
-@app.route('/admin/orders')
+@app.route('/admin/view_orders')
 def view_orders():
     try:
         orders = db.session.execute(text("""
-            SELECT o.*, SUM(oi.quantity * m.price) AS total 
+            SELECT o.id, o.table_no, o.status, SUM(oi.quantity * m.price) AS total 
             FROM orders o
             JOIN order_items oi ON o.id = oi.order_id
             JOIN menu_items m ON oi.menu_item_id = m.id
@@ -120,6 +119,7 @@ def view_orders():
     except Exception as e:
         app.logger.error(f"Error fetching orders: {str(e)}")
         return render_template('admin_partials/view_orders.html', orders=[])
+
 
 @app.route('/admin/menu', methods=['GET', 'POST'])
 def manage_menu():
@@ -215,23 +215,23 @@ def delete_employee(emp_id):
 @app.route('/admin/orders/<int:order_id>')
 def view_order(order_id):
     try:
-        # Fetch the specific order and associated items
         order = db.session.execute(text("""
-            SELECT o.*, SUM(oi.quantity * m.price) AS total 
+            SELECT o.id, o.table_no, o.status, SUM(oi.quantity * m.price) AS total 
             FROM orders o
             JOIN order_items oi ON o.id = oi.order_id
             JOIN menu_items m ON oi.menu_item_id = m.id
             WHERE o.id = :order_id
             GROUP BY o.id
         """), {'order_id': order_id}).mappings().first()
-
         if not order:
-            return "Order not found", 404
-
-        return render_template('admin_partials/view_order_details.html', order=order)
+            # Handle the case where the order is not found
+            flash('Order not found', 'error')
+            return redirect(url_for('view_orders'))
+        return render_template('admin_partials/view_order.html', order=order)
     except Exception as e:
         app.logger.error(f"Error fetching order details: {str(e)}")
-        return "Error fetching order details", 500
+        flash('An error occurred while fetching order details', 'error')
+        return redirect(url_for('view_orders'))
 
 
 # Add this temporary route to test connection

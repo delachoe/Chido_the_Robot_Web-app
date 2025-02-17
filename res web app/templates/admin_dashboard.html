@@ -14,7 +14,7 @@
             <ul class="admin-menu">
                 <li><button onclick="loadContent('view_orders')">View Orders</button></li>
                 <li><button onclick="loadContent('employees')">Employees</button></li>
-                <li><button onclick="loadContent('menu_management')">Menu Management</button></li>
+                <li><button onclick="loadContent('menu')">Menu Management</button></li>
                 <li><button onclick="loadContent('profile')">Profile</button></li>
                 <li><button onclick="logout()">Logout</button></li>
             </ul>
@@ -29,12 +29,24 @@
 
     <script>
     function loadContent(page) {
-        fetch(`/admin/${page}`)
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById('admin-content').innerHTML = html;
-            });
+    let url;
+    if (page === "manage_menu") {
+        url = "/admin/menu";  // Correcting the route
+    } else {
+        url = `/admin/${page}`;
     }
+    
+    fetch(url)
+        .then(response => {
+            if (!response.ok) throw new Error("Page not found");
+            return response.text();
+        })
+        .then(html => {
+            document.getElementById('admin-content').innerHTML = html;
+        })
+        .catch(error => console.error("Error loading content:", error));
+}
+
     
     function logout() {
         fetch('/admin/logout')
