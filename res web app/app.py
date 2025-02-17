@@ -17,6 +17,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = (
     "?charset=utf8mb4"
 )
 
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
