@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="admin-dashboard">
+        <!-- Sidebar -->
+        <div class="admin-sidebar">
+            <h2>Admin Panel</h2>
+            <ul class="admin-menu">
+                <li><button onclick="loadContent('view_orders')">View Orders</button></li>
+                <li><button onclick="loadContent('employees')">Employees</button></li>
+                <li><button onclick="loadContent('menu_management')">Menu Management</button></li>
+                <li><button onclick="loadContent('profile')">Profile</button></li>
+                <li><button onclick="logout()">Logout</button></li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="admin-content" id="admin-content">
+            <!-- Content loaded dynamically -->
+            {% include 'admin_partials/view_orders.html' %}
+        </div>
+    </div>
+
+    <script>
+    function loadContent(page) {
+        fetch(`/admin/${page}`)
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('admin-content').innerHTML = html;
+            });
+    }
+    
+    function logout() {
+        fetch('/admin/logout')
+            .then(() => window.location.href = '/admin/login');
+    }
+    </script>
+</body>
+</html>

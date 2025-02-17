@@ -1,0 +1,36 @@
+<div class="admin-section">
+    <h2>Current Orders</h2>
+    <div class="orders-list">
+        <table>
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Table No</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order[0] }}</td>
+                    <td>{{ order[1] }}</td>
+                    <td>${{ order[2] }}</td>
+                    <td>
+                        <select class="status-select" data-order-id="{{ order[0] }}">
+                            <option value="pending" {% if order[3] == 'pending' %}selected{% endif %}>Pending</option>
+                            <option value="completed" {% if order[3] == 'completed' %}selected{% endif %}>Completed</option>
+                        </select>
+                    </td>
+                    <td>
+                        <td>
+                            <a href="{{ url_for('view_order', order_id=order[0]) }}" class="btn-view">View Details</a>
+                        </td>                        
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

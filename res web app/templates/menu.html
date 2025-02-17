@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="menu-header">
+        <h1>Our Menu</h1>
+    </header>
+    
+    <div class="menu-grid">
+        {% if items %}
+            {% for item in items %}
+            <!-- existing item code -->
+            {% endfor %}
+        {% else %}
+            <div class="empty-menu">
+                <h3>No items available in the menu</h3>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Cart Modal -->
+    <div id="cartModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Your Cart</h2>
+            <div class="cart-content">
+                <input type="number" id="tableNumber" placeholder="Table Number" min="1">
+                <div id="cartItems"></div>
+                <div class="cart-total">
+                    <h3>Total: $<span id="cartTotal">0.00</span></h3>
+                </div>
+                <button class="btn-confirm" onclick="showConfirmation()">Place Order</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <h2>Confirm Order</h2>
+            <div id="orderSummary"></div>
+            <div class="button-group">
+                <button class="btn-confirm" onclick="placeOrder()">Confirm</button>
+                <button class="btn-cancel" onclick="closeModals()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

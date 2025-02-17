@@ -1,0 +1,28 @@
+<div class="order-details">
+    <h2>Order Details for Order #{{ order[0] }}</h2>
+    <p><strong>Table No:</strong> {{ order[1] }}</p>
+    <p><strong>Total:</strong> ${{ order[2] }}</p>
+    <p><strong>Status:</strong> {{ order[3] }}</p>
+    
+    <h3>Order Items</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order_items %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>${{ item.price }}</td>
+                <td>${{ item.quantity * item.price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
