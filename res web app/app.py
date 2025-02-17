@@ -241,7 +241,7 @@ def test_conn():
         db.session.execute(text('SELECT 1'))
         return "Database connection successful!"
     except Exception as e:
-        return f"Connection failed: {str(e)}", 500
+        return f"Connection failed: {str(e)}", 50
 # Other routes remain similar, just update database interactions
 
 if __name__ == '__main__':
